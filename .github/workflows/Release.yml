@@ -45,10 +45,10 @@ jobs:
     - name: Prep release
       shell: bash
       run: |
-        rm .\Release\Beacons\.gitignore
-        mv .\Release\Beacons .\Release\LinuxBeacons
-        rm .\Release\Modules\.gitignore
-        mv .\Release\Modules .\Release\LinuxModules
+        rm ./Release/Beacons/.gitignore
+        mv ./Release/Beacons ./Release/LinuxBeacons
+        rm ./Release/Modules/.gitignore
+        mv ./Release/Modules ./Release/LinuxModules
         tar -zcvf Release.tar.gz Release
 
     - name: Upload release
