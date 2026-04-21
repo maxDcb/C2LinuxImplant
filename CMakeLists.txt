@@ -97,22 +97,10 @@ else()
     add_subdirectory(core/modules)
     add_subdirectory(core/beacon)
 
+    include_directories(core/listener)
     include_directories(core/beacon)
     include_directories(core/modules/ModuleCmd)
     add_subdirectory(beacon/beacon)
 
 endif()
-
-
-
-
-
-
-
-
-
-
-
-
-
 
