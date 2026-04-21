@@ -60,6 +60,33 @@ cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake -DWITH_TESTS=
 make -j4
 ```
 
+Project can be build with the C2Core package
+
+```
+# download last linux package
+url="$(curl -sH 'Accept: application/vnd.github+json' \
+  ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+  'https://api.github.com/repos/maxDcb/C2Core/releases?per_page=100' \
+  | jq -r '[.[] | select(.tag_name|startswith("linux-"))]
+           | sort_by(.created_at) | reverse
+           | .[0].assets[]
+           | select(.name|test("^C2Core-Linux.*"))
+           | .browser_download_url' | head -n1)"
+
+fname="${url##*/}"
+curl -L "$url" -o "$fname"
+echo "Downloaded: $fname"
+
+mkdir -p C2Core-Linux && tar -xzf C2Core-Linux.tar.gz -C C2Core-Linux
+
+export CMAKE_PREFIX_PATH=`pwd`/C2Core-Linux
+
+cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake
+
+make -j4
+```
+
+
 ### Output Locations
 
 * Compiled Beacons: `Release/Beacons`
