@@ -27,7 +27,7 @@ jobs:
     # Update references
     - name: Git Sumbodule Update
       run: |
-        git config --global --add safe.directory ./
+        git config --global --add safe.directory /__w/C2LinuxImplant/C2LinuxImplant
         git submodule update --init
         
     - name: Get Conan
