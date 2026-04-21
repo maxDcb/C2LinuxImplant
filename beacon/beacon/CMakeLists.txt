@@ -1,7 +1,23 @@
+find_package(PythonInterp)
+find_package(Python)
+
+set(PYTHON_SCRIPT "${CMAKE_SOURCE_DIR}//beacon/beacon/handleConfig.py")
+set(GENERATED_HEADER "${CMAKE_BINARY_DIR}/cryptDef.hpp")
+add_custom_command(
+    OUTPUT ${GENERATED_HEADER}
+    COMMAND ${PYTHON_EXECUTABLE} ${PYTHON_SCRIPT} -o ${GENERATED_HEADER} 
+    COMMENT "Generating header.hpp using handleConfig.py"
+    VERBATIM
+)
+add_custom_target(HandleConfig ALL DEPENDS ${GENERATED_HEADER})
+include_directories(${CMAKE_BINARY_DIR})
+
+
 set(SOURCES_BEACON_HTTP_LAUNCHER
 	BeaconHttpLauncher.cpp
 )
-add_executable(BeaconHttp ${SOURCES_BEACON_HTTP_LAUNCHER} project.rc)
+add_executable(BeaconHttp ${SOURCES_BEACON_HTTP_LAUNCHER} project.rc ${GENERATED_HEADER})
+add_dependencies(BeaconHttp HandleConfig)
 set_property(TARGET BeaconHttp PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 target_link_libraries(BeaconHttp BeaconHttpLib)
 add_custom_command(TARGET BeaconHttp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
@@ -36,7 +52,6 @@ set_property(TARGET BeaconSmb PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 target_link_libraries(BeaconSmb BeaconSmbLib)
 add_custom_command(TARGET BeaconSmb POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
 $<TARGET_FILE:BeaconSmb> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconSmb>")
-
 
 
 set(SOURCES_BEACON_DNS_LAUNCHER
