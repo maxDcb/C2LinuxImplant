@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
-find_package(Boost REQUIRED)  
 find_package(OpenSSL REQUIRED)
 find_package(httplib REQUIRED)
 
