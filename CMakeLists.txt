@@ -4,6 +4,8 @@ project(C2LinuxImplant VERSION 0.0.0 LANGUAGES CXX C)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # --- Decide whether a prefix path was provided (var or env) ---
 set(_prefixes "")
@@ -36,25 +38,6 @@ if(_prefixes)
 
 
     ##
-    ## libssh2 for SshExec
-    ##
-
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)         # <- makes static libs PIC
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)  # libssh2 as static
-    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)      # no libssh2 tests
-
-    include(FetchContent) 
-    set(LIBSSH2_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-    set(LIBSSH2_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-    FetchContent_Declare(
-      libssh2
-      GIT_REPOSITORY https://github.com/libssh2/libssh2.git
-      GIT_TAG libssh2-1.11.1
-    )
-    FetchContent_MakeAvailable(libssh2)
-
-
-    ##
     ## C2Core dependency and build
     ##
 
@@ -82,23 +65,22 @@ else()
 
     include_directories(${CMAKE_INCLUDE_PATH})
 
-
     ##
-    ## libssh2 for SshExec
+    ## Fetch for core
     ##
 
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)         # <- makes static libs PIC
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)  # libssh2 as static
-    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)      # no libssh2 tests
+    include(FetchContent)
 
-    include(FetchContent) 
-    set(LIBSSH2_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-    set(LIBSSH2_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
+    set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static libraries" FORCE)
+    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
     FetchContent_Declare(
       libssh2
       GIT_REPOSITORY https://github.com/libssh2/libssh2.git
       GIT_TAG libssh2-1.11.1
     )
+
     FetchContent_MakeAvailable(libssh2)
 
 
