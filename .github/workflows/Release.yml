@@ -19,37 +19,28 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
-    container: gcc:13
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install system dep
-      run: |
-        apt update -y
-        apt install -y cmake
-        apt install -y python3-pip
-      shell: bash
-    
     # Update references
     - name: Git Sumbodule Update
       run: |
-        git config --global --add safe.directory /__w/C2LinuxImplant/C2LinuxImplant
         git submodule update --init
-        
+    
     - name: Get Conan
-      run: |
-        pip3 install conan --break-system-packages
-      shell: bash
+      # You may pin to the exact commit or the version.
+      # uses: turtlebrowser/get-conan@c171f295f3f507360ee018736a6608731aa2109d
+      uses: turtlebrowser/get-conan@v1.2
 
     - name: Create default profile
       run: conan profile detect
       
     - name: Configure CMake
-      run: cmake -B /__w/C2LinuxImplant/C2LinuxImplant/build -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/__w/C2LinuxImplant/C2LinuxImplant/conan_provider.cmake
+      run: cmake -B ${{github.workspace}}/build -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
 
     - name: Build
-      run: cmake --build /__w/C2LinuxImplant/C2LinuxImplant/build --config ${{env.BUILD_TYPE}} -j 18
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j 18
 
     - name: Prep release
       shell: bash
