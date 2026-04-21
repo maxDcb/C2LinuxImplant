@@ -28,7 +28,7 @@ jobs:
       run: |
         apt update -y
         apt install -y cmake
-        apt install python3-pip
+        apt install -y python3-pip
       shell: bash
     
     # Update references
