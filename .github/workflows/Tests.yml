@@ -31,8 +31,8 @@ jobs:
         
     - name: Get Conan
       run: |
-        python3 -m ensurepip --default-pip
-        python3 -m pip install conan
+        pip --version
+        pip install conan
       shell: bash
 
     - name: Create default profile
