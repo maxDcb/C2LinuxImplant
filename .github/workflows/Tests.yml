@@ -31,7 +31,7 @@ jobs:
         
     - name: Get Conan
       run: |
-        python -m ensurepip --default-pip
+        python3 -m ensurepip --default-pip
         python3 -m pip install conan
       shell: bash
 
