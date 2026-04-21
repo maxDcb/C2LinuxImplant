@@ -60,7 +60,7 @@ cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake -DWITH_TESTS=
 make -j4
 ```
 
-Project can be build with the C2Core package
+Project can also be build with the C2Core package:
 
 ```
 # download last linux package
