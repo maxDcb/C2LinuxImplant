@@ -37,6 +37,11 @@ jobs:
 
     - name: Create default profile
       run: conan profile detect
+
+    - name: test
+      run: |
+        ls ${{github.workspace}} -la
+      shell: bash
       
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DWITH_TESTS=ON -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
