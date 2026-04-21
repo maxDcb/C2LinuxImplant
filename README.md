@@ -48,14 +48,10 @@ mkdir build
 cd build
 ```
 
-Compile with or without tests and logging:
+Compile:
 
 ```bash
-# With tests and logs
-cmpake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake -DWITH_TESTS=ON
-
-# Without tests and logs
-cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake -DWITH_TESTS=OFF
+cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake
 
 make -j4
 ```

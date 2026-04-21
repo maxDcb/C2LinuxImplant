@@ -63,21 +63,7 @@ else()
 
     include_directories(thirdParty)
 
-    ##
-    ## Config Tests et Logs
-    ##
-
-    option(WITH_TESTS "Compile for tests" OFF)
-
-    message(STATUS "WITH_TESTS is set to ${WITH_TESTS}")
-
     add_definitions(-DBUILD_IMPLANT)
-    if(NOT WITH_TESTS)
-    message(STATUS "[-] Tests are disabled.")
-    else()
-    message(STATUS "[+] Tests are enabled.")
-    add_definitions(-DBUILD_TESTS)
-    endif()
 
 
     ##
@@ -90,9 +76,11 @@ else()
     include_directories(thirdParty/base64)
     include_directories(thirdParty/donut/include)
 
-    if(WITH_TESTS)
-        enable_testing()
-    endif()
+    set(DONUT_BUILD_DIR "${CMAKE_BINARY_DIR}/thirdParty/donut")
+    add_library(Donut STATIC IMPORTED)
+    set_target_properties(Donut PROPERTIES
+    IMPORTED_LOCATION "${DONUT_BUILD_DIR}/lib/libdonut.a"
+    )
 
     add_subdirectory(core/modules)
     add_subdirectory(core/beacon)
