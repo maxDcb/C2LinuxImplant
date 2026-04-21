@@ -46,26 +46,26 @@ jobs:
       run: conan profile detect
       
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
+      run: cmake -B /__w/C2LinuxImplant/C2LinuxImplant/build -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/__w/C2LinuxImplant/C2LinuxImplant/conan_provider.cmake
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j 18
+      run: cmake --build /__w/C2LinuxImplant/C2LinuxImplant/build --config ${{env.BUILD_TYPE}} -j 18
 
     - name: Prep release
-      shell: pwsh
+      shell: bash
       run: |
         rm .\Release\Beacons\.gitignore
         mv .\Release\Beacons .\Release\LinuxBeacons
         rm .\Release\Modules\.gitignore
         mv .\Release\Modules .\Release\LinuxModules
-        Compress-Archive -Path .\Release -DestinationPath .\Release.zip
+        tar -zcvf Release.tar.gz Release
 
     - name: Upload release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: Release.zip
-        asset_name: Release.zip
+        file: Release.tar.gz
+        asset_name: Release.tar.gz
         tag: ${{ github.ref }}
         overwrite: true
         body: "Linux beacons and modules"
