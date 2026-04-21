@@ -1,5 +1,5 @@
 add_subdirectory(libDns)
 add_subdirectory(libSocks5)
-add_subdirectory(libBoostSocketHandler)
+add_subdirectory(libSocketHandler)
 add_subdirectory(libMemoryModuleDumy)
 add_subdirectory(libPipeHandlerDumy)

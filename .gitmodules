@@ -13,3 +13,6 @@
 [submodule "thirdParty/donut"]
 	path = thirdParty/donut
 	url = https://github.com/maxDcb/donut.git
+[submodule "libs/libSocketHandler"]
+	path = libs/libSocketHandler
+	url = https://github.com/maxDcb/libSocketHandler.git
