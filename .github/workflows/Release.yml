@@ -27,11 +27,6 @@ jobs:
       with:
         python-version: '3.12'
         cache: 'pip'
-
-    - name: Install CMake
-        run: |
-          apt update -y
-          apt install -y cmake
     
     # Update references
     - name: Git Sumbodule Update
