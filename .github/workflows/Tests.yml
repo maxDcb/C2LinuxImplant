@@ -37,25 +37,20 @@ jobs:
 
     - name: Create default profile
       run: conan profile detect
-
-    - name: test
-      run: |
-        ls ${{github.workspace}} -la
-      shell: bash
       
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DWITH_TESTS=ON -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
+      run: cmake -B /__w/C2LinuxImplant/C2LinuxImplant/build -DWITH_TESTS=ON -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/__w/C2LinuxImplant/C2LinuxImplant/conan_provider.cmake
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j 18
+      run: cmake --build /__w/C2LinuxImplant/C2LinuxImplant/build --config ${{env.BUILD_TYPE}} -j 18
 
     - name: Run unit tests
       run: ctest --test-dir build -C Release
       
     - name: Configure CMake like the release
-      run: cmake -B ${{github.workspace}}/buildRelease -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
+      run: cmake -B /__w/C2LinuxImplant/C2LinuxImplant/buildRelease -DWITH_TESTS=OFF -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/__w/C2LinuxImplant/C2LinuxImplant/conan_provider.cmake
 
     - name: Build like the release
-      run: cmake --build ${{github.workspace}}/buildRelease -j 18
+      run: cmake --build /__w/C2LinuxImplant/C2LinuxImplant/buildRelease -j 18
 
 
