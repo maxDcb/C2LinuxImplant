@@ -2,26 +2,33 @@
 
 #include <fstream>
 
+#include <chrono>
 #include <dlfcn.h>
 #include <fcntl.h>
+#include <random>
 #include <sys/mman.h>
 #include <sys/utsname.h>
 #include <unistd.h>
 
 
-void generateRandomShmName(char *name, size_t length) 
+void generateRandomShmName(char *name, size_t length)
 {
     // Define the character set to choose from
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     size_t charsetSize = sizeof(charset) - 1;
 
-    // Seed the random number generator (if not already done)
-    srand(time(NULL));
+    using rng_type = std::mt19937;
+    static rng_type rng{
+        static_cast<rng_type::result_type>(
+            std::random_device{}() ^
+            static_cast<unsigned long>(std::chrono::steady_clock::now().time_since_epoch().count()) ^
+            static_cast<unsigned long>(getpid()))};
+
+    std::uniform_int_distribution<size_t> distribution(0, charsetSize - 1);
 
     // Generate random characters
     for (size_t i = 0; i < length; i++) {
-        int randomIndex = rand() % charsetSize;
-        name[i] = charset[randomIndex];
+        name[i] = charset[distribution(rng)];
     }
 
     // Null-terminate the string
