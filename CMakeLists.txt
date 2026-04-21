@@ -36,9 +36,27 @@ if(_prefixes)
 
 
     ##
-    ## C2Core dependency and build
+    ## libssh2 for SshExec
     ##
 
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)         # <- makes static libs PIC
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)  # libssh2 as static
+    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)      # no libssh2 tests
+
+    include(FetchContent) 
+    set(LIBSSH2_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(LIBSSH2_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+      libssh2
+      GIT_REPOSITORY https://github.com/libssh2/libssh2.git
+      GIT_TAG libssh2-1.11.1
+    )
+    FetchContent_MakeAvailable(libssh2)
+
+
+    ##
+    ## C2Core dependency and build
+    ##
 
     find_package(C2Core CONFIG REQUIRED)
 
@@ -49,6 +67,9 @@ if(_prefixes)
 else()
 
     message(STATUS "CMAKE_PREFIX_PATH not provided; using fallback strategy")
+
+    add_definitions(-DBUILD_IMPLANT)
+
 
     ##
     ## Conan Dependencies
@@ -61,14 +82,31 @@ else()
 
     include_directories(${CMAKE_INCLUDE_PATH})
 
-    include_directories(thirdParty)
 
-    add_definitions(-DBUILD_IMPLANT)
+    ##
+    ## libssh2 for SshExec
+    ##
+
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)         # <- makes static libs PIC
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)  # libssh2 as static
+    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)      # no libssh2 tests
+
+    include(FetchContent) 
+    set(LIBSSH2_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(LIBSSH2_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+      libssh2
+      GIT_REPOSITORY https://github.com/libssh2/libssh2.git
+      GIT_TAG libssh2-1.11.1
+    )
+    FetchContent_MakeAvailable(libssh2)
 
 
     ##
     ## Build
     ##
+
+    include_directories(thirdParty)
 
     add_subdirectory(libs)
 
