@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24.0 FATAL_ERROR)
 
 project(C2LinuxImplant VERSION 0.0.0 LANGUAGES CXX C)
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
 
 ##
 ## Conan Dependencies
