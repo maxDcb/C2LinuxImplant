@@ -1,0 +1,15 @@
+[submodule "core"]
+	path = core
+	url = https://github.com/maxDcb/C2Core.git
+[submodule "libs/libSocks5"]
+	path = libs/libSocks5
+	url = https://github.com/maxDcb/libSocks5.git
+[submodule "libs/libDns"]
+	path = libs/libDns
+	url = https://github.com/maxDcb/Dnscommunication
+[submodule "thirdParty/base64"]
+	path = thirdParty/base64
+	url = https://github.com/ReneNyffenegger/cpp-base64.git
+[submodule "thirdParty/donut"]
+	path = thirdParty/donut
+	url = https://github.com/maxDcb/donut.git

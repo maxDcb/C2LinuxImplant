@@ -1,0 +1,10 @@
+[requires]
+boost/1.86.0 
+openssl/3.3.1 
+cpp-httplib/0.16.3
+
+[layout]
+cmake_layout
+
+[generators]
+CMakeDeps
