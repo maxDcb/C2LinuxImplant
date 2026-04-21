@@ -1,6 +1,11 @@
 [requires]
-openssl/3.3.1 
-cpp-httplib/0.16.3
+openssl/3.6.2
+cpp-httplib/0.39.0
+libssh2/1.11.1
+nlohmann_json/3.12.0
+
+[options]
+libssh2/*:shared=False
 
 [layout]
 cmake_layout

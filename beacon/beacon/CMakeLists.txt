@@ -1,11 +1,10 @@
-find_package(PythonInterp)
-find_package(Python)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 set(PYTHON_SCRIPT "${CMAKE_SOURCE_DIR}//beacon/beacon/handleConfig.py")
 set(GENERATED_HEADER "${CMAKE_BINARY_DIR}/cryptDef.hpp")
 add_custom_command(
     OUTPUT ${GENERATED_HEADER}
-    COMMAND ${PYTHON_EXECUTABLE} ${PYTHON_SCRIPT} -o ${GENERATED_HEADER} 
+    COMMAND ${Python3_EXECUTABLE} ${PYTHON_SCRIPT} -o ${GENERATED_HEADER}
     COMMENT "Generating header.hpp using handleConfig.py"
     VERBATIM
 )
@@ -62,4 +61,3 @@ set_property(TARGET BeaconDns PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 target_link_libraries(BeaconDns BeaconDnsLib)
 add_custom_command(TARGET BeaconDns POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
 $<TARGET_FILE:BeaconDns> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconDns>")
-
