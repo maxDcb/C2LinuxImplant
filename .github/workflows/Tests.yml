@@ -16,11 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-    
+
+    - name: Install CMake
+      run: |
+        apt update -y
+        apt install -y cmake
+      shell: bash
+  
     # Update references
     - name: Git Sumbodule Update
       run: |
@@ -28,9 +30,9 @@ jobs:
         git submodule update --init
         
     - name: Get Conan
-      # You may pin to the exact commit or the version.
-      # uses: turtlebrowser/get-conan@c171f295f3f507360ee018736a6608731aa2109d
-      uses: turtlebrowser/get-conan@v1.2
+      run: |
+        python3 -m pip install conan
+      shell: bash
 
     - name: Create default profile
       run: conan profile detect
