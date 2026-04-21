@@ -3,6 +3,7 @@ openssl/3.6.2
 cpp-httplib/0.39.0
 libssh2/1.11.1
 nlohmann_json/3.12.0
+catch2/3.14.0
 
 [options]
 libssh2/*:shared=False

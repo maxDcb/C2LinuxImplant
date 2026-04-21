@@ -87,3 +87,23 @@ make -j4
 
 * Compiled Beacons: `Release/Beacons`
 * Compiled Modules: `Release/Modules`
+
+### CI/CD Release Contract
+
+CI runs on pull requests and branch pushes. It installs Conan, configures a Release Linux build with `C2CORE_BUILD_TESTS=ON`, builds all Linux beacons/modules, runs `ctest --output-on-failure --timeout 60`, and validates every expected deliverable before archiving.
+
+Release publication runs only from tag builds after CI succeeds. The archive is staged from a clean `artifacts/Release` tree and uses the C2TeamServer-facing layout:
+
+```text
+Release/
+  LinuxBeacons/
+    BeaconDns
+    BeaconGithub
+    BeaconHttp
+    BeaconSmb
+    BeaconTcp
+  LinuxModules/
+    lib*.so
+```
+
+Packaging must not rename, delete, or mutate the CMake output directories `Release/Beacons` and `Release/Modules`; it only copies their non-`.gitignore` contents into staging.

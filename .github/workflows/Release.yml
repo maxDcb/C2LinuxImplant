@@ -1,69 +1,186 @@
-name: Release
+name: CI CD
 
-on: 
+on:
   workflow_dispatch:
+  pull_request:
   push:
+    branches:
+      - "**"
     tags:
-      - '*'
+      - "*"
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_DIR: build-conan
   BUILD_TYPE: Release
+  RELEASE_TARBALL: Release.tar.gz
+  RELEASE_ARTIFACT: C2LinuxImplant-Linux-Release
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  buildAndRelease:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    # compile for old libc to cover more linux versions
+  build-test:
+    name: Build and test Linux deliverables
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-    - name: Install Samba client dev headers
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libsmbclient-dev
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
-    # Update references
-    - name: Git Sumbodule Update
-      run: |
-        git submodule update --init
-    
-    - name: Get Conan
-      # You may pin to the exact commit or the version.
-      # uses: turtlebrowser/get-conan@c171f295f3f507360ee018736a6608731aa2109d
-      uses: turtlebrowser/get-conan@v1.2
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsmbclient-dev
 
-    - name: Create default profile
-      run: conan profile detect
-      
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${{github.workspace}}/conan_provider.cmake
+      - name: Install Conan
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "conan>=2,<3"
+          conan profile detect --force
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j 18
+      - name: Cache Conan packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2
+          key: conan-${{ runner.os }}-${{ hashFiles('conanfile.txt') }}
+          restore-keys: |
+            conan-${{ runner.os }}-
 
-    - name: Prep release
-      shell: bash
-      run: |
-        rm ./Release/Beacons/.gitignore
-        mv ./Release/Beacons ./Release/LinuxBeacons
-        rm ./Release/Modules/.gitignore
-        mv ./Release/Modules ./Release/LinuxModules
-        tar -zcvf Release.tar.gz Release
+      - name: Configure
+        run: |
+          cmake \
+            -S . \
+            -B "$BUILD_DIR" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DC2CORE_BUILD_TESTS=ON \
+            -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$GITHUB_WORKSPACE/conan_provider.cmake"
 
-    - name: Upload release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: Release.tar.gz
-        asset_name: Release.tar.gz
-        tag: ${{ github.ref }}
-        overwrite: true
-        body: "Linux beacons and modules"
+      - name: Build
+        run: cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" --parallel "$(nproc)"
 
+      - name: Test
+        run: ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout 60
+
+      - name: Validate deliverables
+        run: |
+          set -euo pipefail
+
+          expected_beacons=(
+            BeaconDns
+            BeaconGithub
+            BeaconHttp
+            BeaconSmb
+            BeaconTcp
+          )
+
+          expected_modules=(
+            libAssemblyExec.so
+            libCat.so
+            libChangeDirectory.so
+            libChisel.so
+            libCimExec.so
+            libCoff.so
+            libDcomExec.so
+            libDotnetExec.so
+            libDownload.so
+            libEnumerateRdpSessions.so
+            libEnumerateShares.so
+            libEvasion.so
+            libGetEnv.so
+            libInject.so
+            libIpConfig.so
+            libKerberosUseTicket.so
+            libKeyLogger.so
+            libKillProcess.so
+            libListDirectory.so
+            libListProcesses.so
+            libMakeToken.so
+            libMiniDump.so
+            libMkDir.so
+            libNetstat.so
+            libPowershell.so
+            libPrintWorkingDirectory.so
+            libPsExec.so
+            libPwSh.so
+            libRegistry.so
+            libRemove.so
+            libRev2self.so
+            libRun.so
+            libScreenShot.so
+            libScript.so
+            libShell.so
+            libSpawnAs.so
+            libSshExec.so
+            libStealToken.so
+            libTaskScheduler.so
+            libTree.so
+            libUpload.so
+            libWhoami.so
+            libWinRM.so
+            libWmiExec.so
+          )
+
+          for file in "${expected_beacons[@]}"; do
+            test -s "Release/Beacons/$file" || {
+              echo "Missing or empty beacon deliverable: $file" >&2
+              exit 1
+            }
+          done
+
+          for file in "${expected_modules[@]}"; do
+            test -s "Release/Modules/$file" || {
+              echo "Missing or empty module deliverable: $file" >&2
+              exit 1
+            }
+          done
+
+      - name: Stage release archive
+        run: |
+          set -euo pipefail
+          stage="artifacts/Release"
+
+          rm -rf artifacts "$RELEASE_TARBALL"
+          mkdir -p "$stage/LinuxBeacons" "$stage/LinuxModules"
+
+          find Release/Beacons -maxdepth 1 -type f ! -name ".gitignore" -exec cp -t "$stage/LinuxBeacons" {} +
+          find Release/Modules -maxdepth 1 -type f ! -name ".gitignore" -exec cp -t "$stage/LinuxModules" {} +
+
+          tar -C artifacts -czf "$RELEASE_TARBALL" Release
+
+      - name: Upload CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.RELEASE_ARTIFACT }}
+          path: ${{ env.RELEASE_TARBALL }}
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    runs-on: ubuntu-22.04
+    needs: build-test
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download release archive
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.RELEASE_ARTIFACT }}
+
+      - name: Upload release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.RELEASE_TARBALL }}
+          asset_name: ${{ env.RELEASE_TARBALL }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Linux beacons and modules"
