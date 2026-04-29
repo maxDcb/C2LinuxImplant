@@ -7,8 +7,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+option(BUILD_TEAMSERVER "Build teamserver-side command parsing/help code" OFF)
 option(C2CORE_BUILD_TESTS "Enable C2Core tests from the parent project" OFF)
+if(BUILD_TEAMSERVER)
+  add_compile_definitions(BUILD_TEAMSERVER)
+endif()
 if(C2CORE_BUILD_TESTS)
+  add_compile_definitions(C2CORE_BUILD_TESTS)
   enable_testing()
 endif()
 
