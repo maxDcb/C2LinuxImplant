@@ -1,16 +1,13 @@
-name: CI CD
+name: CD
 
 on:
   workflow_dispatch:
-  pull_request:
   push:
-    branches:
-      - "**"
     tags:
       - "*"
 
 env:
-  BUILD_DIR: build-conan
+  BUILD_DIR: build-release
   BUILD_TYPE: Release
   RELEASE_TARBALL: Release.tar.gz
   RELEASE_ARTIFACT: C2LinuxImplant-Linux-Release
@@ -19,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  build-test:
-    name: Build and test Linux deliverables
+  build-package:
+    name: Build Linux release
     runs-on: ubuntu-22.04
 
     steps:
@@ -53,20 +50,25 @@ jobs:
           restore-keys: |
             conan-${{ runner.os }}-
 
-      - name: Configure
+      - name: Configure release
         run: |
           cmake \
             -S . \
             -B "$BUILD_DIR" \
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-            -DC2CORE_BUILD_TESTS=ON \
+            -DC2CORE_BUILD_TESTS=OFF \
+            -DC2CORE_BUILD_FUNCTIONAL_TESTS=OFF \
             -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$GITHUB_WORKSPACE/conan_provider.cmake"
 
       - name: Build
         run: cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" --parallel "$(nproc)"
 
-      - name: Test
-        run: ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout 60
+      - name: Validate release configuration
+        run: |
+          set -euo pipefail
+
+          grep -qx "C2CORE_BUILD_TESTS:BOOL=OFF" "$BUILD_DIR/CMakeCache.txt"
+          grep -qx "C2CORE_BUILD_FUNCTIONAL_TESTS:BOOL=OFF" "$BUILD_DIR/CMakeCache.txt"
 
       - name: Validate deliverables
         run: |
@@ -164,7 +166,7 @@ jobs:
   release:
     name: Publish GitHub release
     runs-on: ubuntu-22.04
-    needs: build-test
+    needs: build-package
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
