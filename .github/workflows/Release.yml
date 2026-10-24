@@ -76,7 +76,6 @@ jobs:
 
           expected_beacons=(
             BeaconDns
-            BeaconGithub
             BeaconHttp
             BeaconTcp
           )
@@ -150,7 +149,7 @@ jobs:
           rm -rf artifacts "$RELEASE_TARBALL"
           mkdir -p "$stage/LinuxBeacons" "$stage/LinuxModules"
 
-          find Release/Beacons -maxdepth 1 -type f ! -name ".gitignore" ! -name "BeaconSmb" -exec cp -t "$stage/LinuxBeacons" {} +
+          find Release/Beacons -maxdepth 1 -type f ! -name ".gitignore" ! -name "BeaconSmb" ! -name "BeaconGithub" -exec cp -t "$stage/LinuxBeacons" {} +
           find Release/Modules -maxdepth 1 -type f ! -name ".gitignore" -exec cp -t "$stage/LinuxModules" {} +
 
           tar -C artifacts -czf "$RELEASE_TARBALL" Release

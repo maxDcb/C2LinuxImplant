@@ -22,11 +22,13 @@ C2TeamServer consumes Linux release payloads from the archive layout below:
 Release/
   LinuxBeacons/
     BeaconDns
-    BeaconGithub
     BeaconHttp
     BeaconTcp
   LinuxModules/
     lib*.so
 ```
+
+`BeaconGithub` is experimental and is built only when
+`C2_ENABLE_GITHUB_TRANSPORT=ON`; it is not part of the default release payload.
 
 The CMake build may copy intermediate deliverables into `Release/Beacons` and `Release/Modules`, but packaging must not rename, delete, or mutate those source output directories. Stage archives from a clean `artifacts/Release` tree instead.

@@ -33,14 +33,17 @@ add_custom_command(TARGET BeaconTcp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
 $<TARGET_FILE:BeaconTcp> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconTcp>")
 
 
-set(SOURCES_BEACON_GITHUB_LAUNCHER
-BeaconGithubLauncher.cpp
-)
-add_executable(BeaconGithub ${SOURCES_BEACON_GITHUB_LAUNCHER} project.rc)
-set_property(TARGET BeaconGithub PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
-target_link_libraries(BeaconGithub BeaconGithubLib)
-add_custom_command(TARGET BeaconGithub POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
-$<TARGET_FILE:BeaconGithub> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconGithub>")
+if(C2_ENABLE_GITHUB_TRANSPORT)
+    set(SOURCES_BEACON_GITHUB_LAUNCHER
+    BeaconGithubLauncher.cpp
+    )
+    add_executable(BeaconGithub ${SOURCES_BEACON_GITHUB_LAUNCHER} project.rc ${GENERATED_HEADER})
+    add_dependencies(BeaconGithub HandleConfig)
+    set_property(TARGET BeaconGithub PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
+    target_link_libraries(BeaconGithub BeaconGithubLib)
+    add_custom_command(TARGET BeaconGithub POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:BeaconGithub> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconGithub>")
+endif()
 
 
 set(SOURCES_BEACON_DNS_LAUNCHER
