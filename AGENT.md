@@ -24,7 +24,6 @@ Release/
     BeaconDns
     BeaconGithub
     BeaconHttp
-    BeaconSmb
     BeaconTcp
   LinuxModules/
     lib*.so

@@ -43,16 +43,6 @@ add_custom_command(TARGET BeaconGithub POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
 $<TARGET_FILE:BeaconGithub> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconGithub>")
 
 
-set(SOURCES_BEACON_SMB_LAUNCHER
-	BeaconSmbLauncher.cpp
-)
-add_executable(BeaconSmb ${SOURCES_BEACON_SMB_LAUNCHER} project.rc)
-set_property(TARGET BeaconSmb PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
-target_link_libraries(BeaconSmb BeaconSmbLib)
-add_custom_command(TARGET BeaconSmb POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
-$<TARGET_FILE:BeaconSmb> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAME:BeaconSmb>")
-
-
 set(SOURCES_BEACON_DNS_LAUNCHER
 	BeaconDnsLauncher.cpp
 )

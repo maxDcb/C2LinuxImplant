@@ -100,10 +100,9 @@ Release/
     BeaconDns
     BeaconGithub
     BeaconHttp
-    BeaconSmb
     BeaconTcp
   LinuxModules/
     lib*.so
 ```
 
-Packaging must not rename, delete, or mutate the CMake output directories `Release/Beacons` and `Release/Modules`; it only copies their non-`.gitignore` contents into staging.
+Packaging must not rename, delete, or mutate the CMake output directories `Release/Beacons` and `Release/Modules`; it copies their supported deliverables into staging. SMB is available only from the Windows implant.
