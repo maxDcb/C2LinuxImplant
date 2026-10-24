@@ -1,9 +1,9 @@
 [requires]
-openssl/3.6.2
-cpp-httplib/0.39.0
+openssl/3.6.5
+cpp-httplib/0.62.0
 libssh2/1.11.1
 nlohmann_json/3.12.0
-catch2/3.14.0
+catch2/3.16.0
 
 [options]
 libssh2/*:shared=False
