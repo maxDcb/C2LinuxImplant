@@ -34,7 +34,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsmbclient-dev
+          sudo apt-get install -y ccache libsmbclient-dev
 
       - name: Install Conan
         run: |
@@ -50,6 +50,12 @@ jobs:
           restore-keys: |
             conan-${{ runner.os }}-
 
+      - name: Cache C++ compilation
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: linux-implant-${{ hashFiles('conanfile.txt') }}
+          max-size: 500MB
+
       - name: Configure release
         run: |
           cmake \
@@ -58,7 +64,9 @@ jobs:
             -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
             -DC2CORE_BUILD_TESTS=OFF \
             -DC2CORE_BUILD_FUNCTIONAL_TESTS=OFF \
-            -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$GITHUB_WORKSPACE/conan_provider.cmake"
+            -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$GITHUB_WORKSPACE/conan_provider.cmake" \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" --parallel "$(nproc)"
