@@ -102,6 +102,7 @@ jobs:
             libEnumerateShares.so
             libEvasion.so
             libGetEnv.so
+            libHostContext.so
             libInject.so
             libIpConfig.so
             libKerberosUseTicket.so
