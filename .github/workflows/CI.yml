@@ -75,6 +75,22 @@ jobs:
       - name: Run CI tests
         run: ctest --test-dir "$BUILD_DIR" --output-on-failure --timeout 60
 
+      - name: Configure local module contracts
+        run: |
+          cmake \
+            -S core/modules/tests/local \
+            -B "$BUILD_DIR-local-contracts" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DC2_BASE64_SOURCE_DIR="$GITHUB_WORKSPACE/thirdParty/base64" \
+            -Dnlohmann_json_DIR="$GITHUB_WORKSPACE/$BUILD_DIR/conan/build/Release/generators" \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build local module contracts
+        run: cmake --build "$BUILD_DIR-local-contracts" --parallel "$(nproc)"
+
+      - name: Test local module contracts
+        run: ctest --test-dir "$BUILD_DIR-local-contracts" --output-on-failure --timeout 60
+
       - name: Functional tests
         if: ${{ false }}
         run: echo "Functional tests require a lab/runtime environment and are intentionally skipped in standard CI."
