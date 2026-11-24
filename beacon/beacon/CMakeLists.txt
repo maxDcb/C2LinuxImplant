@@ -26,7 +26,8 @@ $<TARGET_FILE:BeaconHttp> "${CMAKE_SOURCE_DIR}/Release/Beacons/$<TARGET_FILE_NAM
 set(SOURCES_BEACON_TCP_LAUNCHER
 BeaconTcpLauncher.cpp
 )
-add_executable(BeaconTcp ${SOURCES_BEACON_TCP_LAUNCHER} project.rc)
+add_executable(BeaconTcp ${SOURCES_BEACON_TCP_LAUNCHER} project.rc ${GENERATED_HEADER})
+add_dependencies(BeaconTcp HandleConfig)
 set_property(TARGET BeaconTcp PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 target_link_libraries(BeaconTcp BeaconTcpLib)
 add_custom_command(TARGET BeaconTcp POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
@@ -49,7 +50,8 @@ endif()
 set(SOURCES_BEACON_DNS_LAUNCHER
 	BeaconDnsLauncher.cpp
 )
-add_executable(BeaconDns ${SOURCES_BEACON_DNS_LAUNCHER} project.rc)
+add_executable(BeaconDns ${SOURCES_BEACON_DNS_LAUNCHER} project.rc ${GENERATED_HEADER})
+add_dependencies(BeaconDns HandleConfig)
 set_property(TARGET BeaconDns PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 target_link_libraries(BeaconDns BeaconDnsLib)
 add_custom_command(TARGET BeaconDns POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy 
